@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        https://www.springframework.org/schema/context/spring-context.xsd
+         http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+	<!-- automatic scan of the base packages and all sub-packages for spring beans -->
+	<context:component-scan base-package="prototype" />
+
+	<!-- allows the usage of the @Transactional attribute for the service layer -->
+	<tx:annotation-driven />
+
+	<!-- datasource that alloows access to the embedded or external HSQL database -->
+	<bean id="datasource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="driverClassName" value="org.hsqldb.jdbcDriver" />
+		<property name="url" value="jdbc:hsqldb:hsql://localhost:9001/prototype" />
+		<property name="username" value="sa" />
+		<property name="password" value="" />
+	</bean>
+
+	<!-- create a hibernate session factory that is configured for the HSQL database and automatically scanns the swl model directory for classes 
+		that can be handled by hibernate -->
+	<bean id="hibernateSessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+		<property name="dataSource" ref="datasource" />
+		<property name="packagesToScan">
+			<list>
+				<value>prototype.entities</value>
+			</list>
+		</property>
+		<property name="hibernateProperties">
+			<value>
+				hibernate.dialect=org.hibernate.dialect.HSQLDialect
+				hibernate.hbm2ddl.auto=create-drop
+			</value>
+		</property>
+	</bean>
+
+	<!-- instantiates the transaction manager for the previously creates session factory -->
+	<bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+		<property name="sessionFactory" ref="hibernateSessionFactory" />
+	</bean>
+
+</beans>

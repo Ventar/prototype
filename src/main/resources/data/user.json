@@ -1,0 +1,13 @@
+[
+    {
+        "firstName": "Michael",
+        "lastName" : "Rodenbuecher",
+        "email"    : "michael.rodenbuecher@atos.net"
+    },
+    {
+        "firstName": "Johannes",
+        "lastName" : "Ruetschi",
+        "email"    : "johannes.ruetschi@atos.net"
+    }
+    
+]
